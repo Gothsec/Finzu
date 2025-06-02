@@ -3,6 +3,7 @@ package com.example.finzu;
 import java.io.Serializable;
 
 public class User implements Serializable {
+    private int id;
     private String fullName;
     private String email;
     private String password;
@@ -12,8 +13,9 @@ public class User implements Serializable {
     private String currency;        // cop, usd, eur
     private String reminderHour;    // "off" or "08:00", etc.
 
-    public User(String fullName, String email, String password, String profilePicUrl,
+    public User(int id, String fullName, String email, String password, String profilePicUrl,
                 String currency, String reminderHour) {
+        this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -23,6 +25,7 @@ public class User implements Serializable {
     }
 
     // Getters and Setters
+    public int getId() { return id; }
     public String getFullName() { return fullName; }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
