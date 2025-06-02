@@ -1,6 +1,8 @@
 package com.example.finzu;
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
     private int id;
     private String type; // income or outcome
     private double amount;
