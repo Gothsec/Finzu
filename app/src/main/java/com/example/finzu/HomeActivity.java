@@ -28,13 +28,5 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        tvWelcome = findViewById(R.id.tv_welcome);
-        User loggedInUser = UserSession.getInstance().getUser();
-        if (loggedInUser != null) {
-            name = loggedInUser.getFullName();
-            id = loggedInUser.getId();
-        }
-        tvWelcome.setText("Welcome\n" + name);
     }
 }

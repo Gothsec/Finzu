@@ -35,18 +35,6 @@
         android:textColor="#B0B0B0"
         android:textSize="16sp" />
 
-    <!-- Título Login -->
-    <TextView
-        android:id="@+id/tv_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="Login"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="32sp"
-        android:textStyle="bold" />
 
     <!-- Campo de Correo -->
 
