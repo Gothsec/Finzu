@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finzu"
         tools:targetApi="31">
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".MainActivity"
