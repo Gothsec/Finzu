@@ -1,15 +1,23 @@
 package com.example.finzu;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.example.finzu.User;
+import com.example.finzu.UserSession;
 
 public class HomeActivity extends AppCompatActivity {
+    private TextView tvWelcome;
+    private String name;
+    private int id;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,5 +28,13 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        tvWelcome = findViewById(R.id.tv_welcome);
+        User loggedInUser = UserSession.getInstance().getUser();
+        if (loggedInUser != null) {
+            name = loggedInUser.getFullName();
+            id = loggedInUser.getId();
+        }
+        tvWelcome.setText("Welcome\n" + name);
     }
 }
