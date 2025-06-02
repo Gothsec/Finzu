@@ -24,12 +24,33 @@ public class UserSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE users (" +
+        String createUsersTable = "CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "full_name TEXT, " +
                 "email TEXT UNIQUE, " +
                 "password TEXT)";
-        db.execSQL(createTable);
+        db.execSQL(createUsersTable);
+
+        // Account table
+        String createAccountTable = "CREATE TABLE accounts (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "user_email TEXT, " +
+                "name TEXT, " +
+                "amount REAL DEFAULT 0, " +
+                "type TEXT)";
+        db.execSQL(createAccountTable);
+
+        // Transaction table
+        String createTransactionTable = "CREATE TABLE transactions (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "type TEXT, " +
+                "amount REAL, " +
+                "account_id INTEGER, " +
+                "details TEXT, " +
+                "date TEXT, " +
+                "FOREIGN KEY(account_id) REFERENCES accounts(id) ON DELETE CASCADE)";
+        db.execSQL(createTransactionTable);
+
     }
 
     @Override
