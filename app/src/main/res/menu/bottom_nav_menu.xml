@@ -1,11 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:title="Inicio" />
+        android:title="Inicio"
+        android:icon="@drawable/ic_home"
+        />
     <item
         android:id="@+id/nav_chart"
-        android:title="Resumen" />
+        android:title="Resumen"
+        android:icon="@drawable/ic_stats"
+        />
     <item
         android:id="@+id/nav_settings"
-        android:title="Ajustes" />
+        android:title="Ajustes"
+        android:icon="@drawable/ic_settings"
+        />
 </menu>
