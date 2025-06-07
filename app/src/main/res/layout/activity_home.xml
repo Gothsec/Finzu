@@ -130,7 +130,9 @@
         android:layout_marginBottom="80dp"
         android:backgroundTint="#66FF99"
         android:elevation="18dp"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_add"
+        />
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
