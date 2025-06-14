@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,13 +23,25 @@ public class AccountsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_accounts, container, false);
 
+        // Boton volver atras
         ImageView btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
             requireActivity().getSupportFragmentManager().popBackStack();
         });
 
+        // Boton historial
+        CardView btnHistory = view.findViewById(R.id.btn_history);
+        btnHistory.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new HistoryFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
         return view;
     }
+
 
 
     @Override
