@@ -10,9 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.finzu.User;
-import com.example.finzu.UserSession;
-
 public class MainActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
