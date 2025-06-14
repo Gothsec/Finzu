@@ -80,6 +80,7 @@
 
     <!-- Botón Historial -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/btn_history"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="24dp"
