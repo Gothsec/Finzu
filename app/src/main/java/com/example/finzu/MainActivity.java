@@ -9,8 +9,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends AppCompatActivity {
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack(); // Regresa al fragmento anterior
+        } else {
+            super.onBackPressed(); // Sale de la app si no hay nada en el back stack
+        }
+    }
 
     private EditText etEmail, etPassword;
     private TextView btnLogin, tvRegister;
@@ -27,6 +37,15 @@ public class MainActivity extends AppCompatActivity {
         tvRegister = findViewById(R.id.tv_register);
 
         userDB = UserSQLiteOpenHelper.getInstance(this);
+
+        setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new HomeFragment())
+                    .commit();
+        }
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
