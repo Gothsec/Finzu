@@ -39,6 +39,13 @@ public class AccountsFragment extends Fragment {
                     .commit();
         });
 
+        // Boton crear cuenta
+        CardView btnCreateAccounts = view.findViewById(R.id.btnCreateAccounts);
+        btnCreateAccounts.setOnClickListener(v -> {
+            NewAccountDialog dialog = new NewAccountDialog();
+            dialog.show(getParentFragmentManager(), "NewAccountDialog");
+        });
+
         return view;
     }
 

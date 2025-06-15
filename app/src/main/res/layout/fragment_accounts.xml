@@ -176,6 +176,7 @@
 
     <!-- Botón Crear cuenta -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/btnCreateAccounts"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
