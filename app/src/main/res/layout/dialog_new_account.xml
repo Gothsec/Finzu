@@ -63,18 +63,6 @@
             android:textColor="#FFFFFF"
             android:textColorHint="#AAAAAA" />
 
-        <!-- Campo: Tipo de cuenta -->
-        <EditText
-            android:id="@+id/edit_tipo"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_input"
-            android:hint="Tipo de cuenta"
-            android:paddingHorizontal="12dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA" />
-
         <!-- Botón guardar -->
         <Button
             android:id="@+id/btn_guardar"

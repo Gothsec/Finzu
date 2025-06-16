@@ -1,30 +1,30 @@
-package com.example.finzu;
+package com.example.finzu.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class UserSQLiteOpenHelper extends SQLiteOpenHelper {
+public class FinzuDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "users.db";
+    private static final String DB_NAME = "finzu.db";
     private static final int DB_VERSION = 1;
 
-    private static UserSQLiteOpenHelper instance;
+    private static FinzuDatabaseHelper instance;
 
-    public static synchronized UserSQLiteOpenHelper getInstance(Context context) {
+    public static synchronized FinzuDatabaseHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new UserSQLiteOpenHelper(context.getApplicationContext());
+            instance = new FinzuDatabaseHelper(context.getApplicationContext());
         }
         return instance;
     }
 
-    public UserSQLiteOpenHelper(Context context) {
+    public FinzuDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // User table
+        // Tabla de usuarios
         String createUserTable = "CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "full_name TEXT, " +
@@ -32,33 +32,37 @@ public class UserSQLiteOpenHelper extends SQLiteOpenHelper {
                 "password TEXT, " +
                 "profile_pic_url TEXT DEFAULT '', " +
                 "currency TEXT DEFAULT 'usd', " +
-                "reminder_hour TEXT DEFAULT 'off')";
+                "reminder_hour TEXT DEFAULT '', " +
+                "reminder TEXT DEFAULT 'off', " +
+                "balance REAL DEFAULT 0" +
+                ")";
         db.execSQL(createUserTable);
 
-
-        // Account table
+        // Tabla de cuentas
         String createAccountTable = "CREATE TABLE accounts (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "user_email TEXT, " +
                 "name TEXT, " +
                 "amount REAL DEFAULT 0, " +
-                "type TEXT)";
+                "FOREIGN KEY(user_email) REFERENCES users(email) ON DELETE CASCADE" +
+                ")";
         db.execSQL(createAccountTable);
 
-        // Transaction table
+        // Tabla de transacciones
         String createTransactionTable = "CREATE TABLE transactions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "type TEXT, " +
+                "type TEXT, " +               // income / outcome
                 "amount REAL, " +
                 "account_id INTEGER, " +
                 "details TEXT, " +
                 "date TEXT, " +
-                "FOREIGN KEY(account_id) REFERENCES accounts(id) ON DELETE CASCADE)";
+                "FOREIGN KEY(account_id) REFERENCES accounts(id) ON DELETE CASCADE" +
+                ")";
         db.execSQL(createTransactionTable);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Por ahora sin implementación de migraciones
     }
 }

@@ -1,4 +1,4 @@
-package com.example.finzu;
+package com.example.finzu.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,15 +7,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.finzu.R;
+import com.example.finzu.repositories.AccountRepository;
+import com.example.finzu.models.Account;
+import com.example.finzu.session.UserSession;
+import com.example.finzu.utils.ToastUtils;
+
 public class NewAccountDialog extends DialogFragment {
 
-    private EditText editNombre, editCantidad, editTipo;
+    private EditText editNombre, editCantidad;
     private Button btnGuardar;
     private TextView btnCerrar;
 
@@ -25,7 +30,7 @@ public class NewAccountDialog extends DialogFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        // 🔥 Quitar el fondo gris predeterminado del diálogo
+        // Quitar fondo gris predeterminado
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
@@ -34,7 +39,6 @@ public class NewAccountDialog extends DialogFragment {
 
         editNombre = view.findViewById(R.id.edit_nombre);
         editCantidad = view.findViewById(R.id.edit_cantidad);
-        editTipo = view.findViewById(R.id.edit_tipo);
         btnGuardar = view.findViewById(R.id.btn_guardar);
         btnCerrar = view.findViewById(R.id.btn_cerrar);
 
@@ -42,17 +46,34 @@ public class NewAccountDialog extends DialogFragment {
 
         btnGuardar.setOnClickListener(v -> {
             String nombre = editNombre.getText().toString().trim();
-            String cantidad = editCantidad.getText().toString().trim();
-            String tipo = editTipo.getText().toString().trim();
+            String cantidadStr = editCantidad.getText().toString().trim();
 
-            if (nombre.isEmpty() || cantidad.isEmpty() || tipo.isEmpty()) {
-                Toast.makeText(getContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            if (nombre.isEmpty() || cantidadStr.isEmpty()) {
+                ToastUtils.showShort(requireContext(), "Completa todos los campos");
                 return;
             }
 
-            // Aquí puedes guardar en base de datos
-            Toast.makeText(getContext(), "Cuenta guardada: " + nombre, Toast.LENGTH_SHORT).show();
-            dismiss();
+            double cantidad;
+            try {
+                cantidad = Double.parseDouble(cantidadStr);
+            } catch (NumberFormatException e) {
+                ToastUtils.showLong(requireContext(), "Cantidad inválida");
+                return;
+            }
+
+            String userEmail = UserSession.getInstance().getUser().getEmail();
+            Account nuevaCuenta = new Account(0, userEmail, nombre, cantidad);
+
+            AccountRepository repo = new AccountRepository(requireContext());
+            long result = repo.insertAccount(userEmail, nuevaCuenta);
+            repo.close();
+
+            if (result != -1) {
+                ToastUtils.showShort(requireContext(), "Cuenta guardada: " + nombre);
+                dismiss();
+            } else {
+                ToastUtils.showLong(requireContext(), "Error al guardar cuenta");
+            }
         });
 
         return view;
