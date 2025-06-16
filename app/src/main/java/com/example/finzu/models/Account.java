@@ -1,34 +1,26 @@
 package com.example.finzu.models;
 
-import java.io.Serializable;
-
-public class Account implements Serializable {
+public class Account {
     private int id;
+    private String userEmail;
     private String name;
     private double amount;
-    private String type;
 
-    public Account(int id, String name, double amount, String type) {
+    public Account(int id, String userEmail, String name, double amount) {
         this.id = id;
+        this.userEmail = userEmail;
         this.name = name;
         this.amount = amount;
-        this.type = type;
     }
 
-    // Getters and Setters
+    // Getters y setters
     public int getId() { return id; }
-
+    public String getUserEmail() { return userEmail; }
     public String getName() { return name; }
-
     public double getAmount() { return amount; }
 
-    public String getType() { return type; }
-
     public void setId(int id) { this.id = id; }
-
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
     public void setName(String name) { this.name = name; }
-
     public void setAmount(double amount) { this.amount = amount; }
-
-    public void setType(String type) { this.type = type; }
 }

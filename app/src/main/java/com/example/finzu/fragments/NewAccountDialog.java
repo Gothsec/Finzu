@@ -13,14 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.finzu.R;
-import com.example.finzu.database.AccountRepository;
+import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.models.Account;
 import com.example.finzu.session.UserSession;
 import com.example.finzu.utils.ToastUtils;
 
 public class NewAccountDialog extends DialogFragment {
 
-    private EditText editNombre, editCantidad, editTipo;
+    private EditText editNombre, editCantidad;
     private Button btnGuardar;
     private TextView btnCerrar;
 
@@ -39,7 +39,6 @@ public class NewAccountDialog extends DialogFragment {
 
         editNombre = view.findViewById(R.id.edit_nombre);
         editCantidad = view.findViewById(R.id.edit_cantidad);
-        editTipo = view.findViewById(R.id.edit_tipo);
         btnGuardar = view.findViewById(R.id.btn_guardar);
         btnCerrar = view.findViewById(R.id.btn_cerrar);
 
@@ -48,9 +47,8 @@ public class NewAccountDialog extends DialogFragment {
         btnGuardar.setOnClickListener(v -> {
             String nombre = editNombre.getText().toString().trim();
             String cantidadStr = editCantidad.getText().toString().trim();
-            String tipo = editTipo.getText().toString().trim();
 
-            if (nombre.isEmpty() || cantidadStr.isEmpty() || tipo.isEmpty()) {
+            if (nombre.isEmpty() || cantidadStr.isEmpty()) {
                 ToastUtils.showShort(requireContext(), "Completa todos los campos");
                 return;
             }
@@ -63,8 +61,8 @@ public class NewAccountDialog extends DialogFragment {
                 return;
             }
 
-            Account nuevaCuenta = new Account(0, nombre, cantidad, tipo);
             String userEmail = UserSession.getInstance().getUser().getEmail();
+            Account nuevaCuenta = new Account(0, userEmail, nombre, cantidad);
 
             AccountRepository repo = new AccountRepository(requireContext());
             long result = repo.insertAccount(userEmail, nuevaCuenta);

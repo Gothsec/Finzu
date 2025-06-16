@@ -1,46 +1,34 @@
 package com.example.finzu.models;
 
-import java.io.Serializable;
-
-public class Transaction implements Serializable {
+public class Transaction {
     private int id;
-    private String type; // income or outcome
     private double amount;
-    private int accountId; // linked account
+    private String type; // "income" o "outcome"
+    private int accountId;
     private String details;
     private String date;
 
-    public Transaction(int id, String type, double amount, int accountId, String details, String date) {
+    public Transaction(int id, double amount, String type, int accountId, String details, String date) {
         this.id = id;
-        this.type = type;
         this.amount = amount;
+        this.type = type;
         this.accountId = accountId;
         this.details = details;
         this.date = date;
     }
 
-    // Getters and Setters
+    // Getters y setters
     public int getId() { return id; }
-
-    public String getType() { return type; }
-
     public double getAmount() { return amount; }
-
+    public String getType() { return type; }
     public int getAccountId() { return accountId; }
-
     public String getDetails() { return details; }
-
     public String getDate() { return date; }
 
     public void setId(int id) { this.id = id; }
-
-    public void setType(String type) { this.type = type; }
-
     public void setAmount(double amount) { this.amount = amount; }
-
+    public void setType(String type) { this.type = type; }
     public void setAccountId(int accountId) { this.accountId = accountId; }
-
     public void setDetails(String details) { this.details = details; }
-
     public void setDate(String date) { this.date = date; }
 }

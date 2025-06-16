@@ -28,18 +28,21 @@ public class Home extends AppCompatActivity {
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-
-            // Espera un corto tiempo para que el popBackStack se complete y luego actualiza la UI
             getSupportFragmentManager().executePendingTransactions();
 
             Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            if (current instanceof HomeFragment) {
-                findViewById(R.id.fab_add).setVisibility(View.VISIBLE);
-            } else {
-                findViewById(R.id.fab_add).setVisibility(View.GONE);
+
+            View fab = findViewById(R.id.fab_add);
+            if (fab != null) {
+                if (current instanceof HomeFragment) {
+                    fab.setVisibility(View.VISIBLE);
+                } else {
+                    fab.setVisibility(View.GONE);
+                }
             }
         } else {
             super.onBackPressed();
         }
     }
+
 }

@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finzu.R;
-import com.example.finzu.database.UserRepository;
+import com.example.finzu.repositories.UserRepository;
 import com.example.finzu.models.User;
 import com.example.finzu.session.UserSession;
 import com.example.finzu.utils.ToastUtils;

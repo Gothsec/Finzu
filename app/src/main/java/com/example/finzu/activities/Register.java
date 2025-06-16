@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finzu.R;
-import com.example.finzu.database.UserRepository;
+import com.example.finzu.repositories.UserRepository;
 import com.example.finzu.utils.ToastUtils;
 import com.example.finzu.utils.ValidationUtils;
 
