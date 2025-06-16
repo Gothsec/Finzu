@@ -9,9 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
@@ -92,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
             db.close();
 
             // Go to home
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, Home.class));
             finish();
         });
 
         tvRegister.setOnClickListener(v -> {
-            startActivity(new Intent(this, RegisterActivity.class));
+            startActivity(new Intent(this, Register.class));
         });
     }
 }

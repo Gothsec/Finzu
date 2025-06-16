@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RegisterActivity extends AppCompatActivity {
+public class Register extends AppCompatActivity {
 
     private EditText etName, etEmail, etPassword;
     private TextView btnRegister;
@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Check if email is already used
             Cursor cursor = db.rawQuery("SELECT email FROM users WHERE email = ?", new String[]{email});
             if (cursor.moveToFirst()) {
-                Toast.makeText(RegisterActivity.this, "Este correo ya está registrado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Este correo ya está registrado", Toast.LENGTH_SHORT).show();
                 cursor.close();
                 db.close();
                 return;
@@ -62,10 +62,10 @@ public class RegisterActivity extends AppCompatActivity {
             db.close();
 
             if (result == -1) {
-                Toast.makeText(RegisterActivity.this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Register.this, "Error al registrar", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(RegisterActivity.this, "Cuenta creada para " + name, Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                Toast.makeText(Register.this, "Cuenta creada para " + name, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Register.this, Login.class));
                 finish();
             }
         });
