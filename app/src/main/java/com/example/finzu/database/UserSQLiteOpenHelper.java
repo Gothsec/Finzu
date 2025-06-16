@@ -1,4 +1,4 @@
-package com.example.finzu;
+package com.example.finzu.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

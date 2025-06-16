@@ -1,10 +1,9 @@
-package com.example.finzu;
+package com.example.finzu.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -13,6 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.finzu.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomeFragment extends Fragment {

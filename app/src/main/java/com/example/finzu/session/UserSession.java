@@ -1,6 +1,6 @@
-package com.example.finzu;
+package com.example.finzu.session;
 
-import com.example.finzu.User;
+import com.example.finzu.models.User;
 
 public class UserSession {
     private static UserSession instance;

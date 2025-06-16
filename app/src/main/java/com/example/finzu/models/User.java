@@ -1,4 +1,4 @@
-package com.example.finzu;
+package com.example.finzu.models;
 
 import java.io.Serializable;
 

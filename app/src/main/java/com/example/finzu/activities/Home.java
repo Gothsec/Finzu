@@ -1,10 +1,13 @@
-package com.example.finzu;
+package com.example.finzu.activities;
 
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.example.finzu.fragments.HomeFragment;
+import com.example.finzu.R;
 
 public class Home extends AppCompatActivity {
     @Override
