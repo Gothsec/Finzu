@@ -41,7 +41,7 @@ public class TransactionRepository {
         Cursor cursor = db.rawQuery("SELECT amount FROM accounts WHERE id = ?", new String[]{String.valueOf(accountId)});
         if (cursor.moveToFirst()) {
             double currentAmount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"));
-            double newAmount = type.equals("income") ? currentAmount + amount : currentAmount - amount;
+            double newAmount = type.equals("ingreso") ? currentAmount + amount : currentAmount - amount;
 
             ContentValues values = new ContentValues();
             values.put("amount", newAmount);
@@ -65,7 +65,8 @@ public class TransactionRepository {
                         cursor.getString(cursor.getColumnIndexOrThrow("type")),
                                         cursor.getInt(cursor.getColumnIndexOrThrow("account_id")),
                                         cursor.getString(cursor.getColumnIndexOrThrow("details")),
-                                        cursor.getString(cursor.getColumnIndexOrThrow("date"))
+                                        cursor.getString(cursor.getColumnIndexOrThrow("date")),
+                        true
                                 );
                 transactions.add(t);
             } while (cursor.moveToNext());
@@ -96,7 +97,7 @@ public class TransactionRepository {
                 String details = cursor.getString(cursor.getColumnIndexOrThrow("details"));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
 
-                Transaction transaction = new Transaction(id, amount, tType, aId, details, date);
+                Transaction transaction = new Transaction(id, amount, tType, aId, details, date, true);
                 transactions.add(transaction);
             } while (cursor.moveToNext());
         }
