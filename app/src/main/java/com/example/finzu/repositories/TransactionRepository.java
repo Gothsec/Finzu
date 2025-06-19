@@ -41,7 +41,8 @@ public class TransactionRepository {
         Cursor cursor = db.rawQuery("SELECT amount FROM accounts WHERE id = ?", new String[]{String.valueOf(accountId)});
         if (cursor.moveToFirst()) {
             double currentAmount = cursor.getDouble(cursor.getColumnIndexOrThrow("amount"));
-            double newAmount = type.equals("ingreso") ? currentAmount + amount : currentAmount - amount;
+            String cleanType = type.trim().toLowerCase();
+            double newAmount = cleanType.equals("ingreso") ? currentAmount + amount : currentAmount - amount;
 
             ContentValues values = new ContentValues();
             values.put("amount", newAmount);
