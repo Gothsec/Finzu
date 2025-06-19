@@ -10,9 +10,10 @@ public class User {
     private String reminderHour;
     private boolean reminder; // true / false
     private double balance;
+    private boolean active;
 
     public User(int id, String fullName, String email, String password, String profilePicUrl,
-                String currency, String reminderHour, boolean reminder, double balance) {
+                String currency, String reminderHour, boolean reminder, double balance, boolean active) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -22,6 +23,7 @@ public class User {
         this.reminderHour = reminderHour;
         this.reminder = reminder;
         this.balance = balance;
+        this.active = active;
     }
 
     // Getters y setters
@@ -35,6 +37,8 @@ public class User {
     public boolean isReminder() { return reminder; }
     public double getBalance() { return balance; }
 
+    public boolean isActive() { return active; }
+
     public void setId(int id) { this.id = id; }
     public void setFullName(String fullName) { this.fullName = fullName; }
     public void setEmail(String email) { this.email = email; }
@@ -44,4 +48,5 @@ public class User {
     public void setReminderHour(String reminderHour) { this.reminderHour = reminderHour; }
     public void setReminder(boolean reminder) { this.reminder = reminder; }
     public void setBalance(double balance) { this.balance = balance; }
+    public void setActive(boolean active) { this.active = active; }
 }
