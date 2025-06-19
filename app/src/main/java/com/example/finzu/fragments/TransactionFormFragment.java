@@ -114,7 +114,7 @@ public class TransactionFormFragment extends Fragment {
         int accountId = userAccounts.get(selectedPosition).getId();
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        Transaction transaction = new Transaction(-1, amount, type, accountId, details, date);
+        Transaction transaction = new Transaction(-1, amount, type, accountId, details, date, true);
 
         TransactionRepository repo = new TransactionRepository(requireContext());
         long insertedId = repo.insertTransaction(transaction);
