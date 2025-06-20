@@ -79,7 +79,7 @@ public class UserRepository {
         boolean reminder = "on".equals(cursor.getString(cursor.getColumnIndexOrThrow("reminder")));
         double balance = cursor.getDouble(cursor.getColumnIndexOrThrow("balance"));
 
-        return new User(id, fullName, email, password, profilePic, currency, reminderHour, reminder, balance);
+        return new User(id, fullName, email, password, profilePic, currency, reminderHour, reminder, balance, true);
     }
 
     public void close() {
