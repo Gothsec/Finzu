@@ -11,6 +11,7 @@ import com.example.finzu.R;
 import com.example.finzu.repositories.UserRepository;
 import com.example.finzu.models.User;
 import com.example.finzu.session.UserSession;
+import com.example.finzu.utils.NavigationUtils;
 import com.example.finzu.utils.ToastUtils;
 import com.example.finzu.utils.ValidationUtils;
 
@@ -18,15 +19,8 @@ public class Login extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private TextView btnLogin, tvRegister;
+    private NavigationUtils navUtils;
 
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +36,11 @@ public class Login extends AppCompatActivity {
         // Login button event
 
         btnLogin.setOnClickListener(v -> {
+            // Get data
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            // Validate data
             if (!ValidationUtils.areLoginFieldsValid(email, password)) {
                 ToastUtils.showLong(this, "Correo o contraseña incorrectos");
                 return;
@@ -59,14 +55,13 @@ public class Login extends AppCompatActivity {
             if (user == null) {
                 ToastUtils.showLong(this, "Correo o contraseña incorrectos");
             } else {
+                // Starts session (set User instance to Session instance)
                 UserSession.getInstance().setUser(user);
-                startActivity(new Intent(this, Home.class));
-                finish();
+                // Redirects to Home
+                navUtils.changeActivityAndFinish(this, Home.class);
             }
         });
 
-        tvRegister.setOnClickListener(v -> {
-            startActivity(new Intent(this, Register.class));
-        });
+        tvRegister.setOnClickListener(v -> { navUtils.changeActivity(this, Register.class); });
     }
 }
