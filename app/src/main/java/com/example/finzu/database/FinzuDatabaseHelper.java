@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class FinzuDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "finzu.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static FinzuDatabaseHelper instance;
 
@@ -24,7 +24,7 @@ public class FinzuDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Tabla de usuarios
+        // Users
         String createUserTable = "CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "full_name TEXT, " +
@@ -34,21 +34,22 @@ public class FinzuDatabaseHelper extends SQLiteOpenHelper {
                 "currency TEXT DEFAULT 'usd', " +
                 "reminder_hour TEXT DEFAULT '', " +
                 "reminder TEXT DEFAULT 'off', " +
-                "balance REAL DEFAULT 0" +
-                ")";
+                "balance REAL DEFAULT 0, " +
+                "active INTEGER DEFAULT 1" + ")";
         db.execSQL(createUserTable);
 
-        // Tabla de cuentas
+        // Accounts
         String createAccountTable = "CREATE TABLE accounts (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "user_email TEXT, " +
                 "name TEXT, " +
                 "amount REAL DEFAULT 0, " +
+                "active INTEGER DEFAULT 1, " +
                 "FOREIGN KEY(user_email) REFERENCES users(email) ON DELETE CASCADE" +
                 ")";
         db.execSQL(createAccountTable);
 
-        // Tabla de transacciones
+        // Transactions
         String createTransactionTable = "CREATE TABLE transactions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "type TEXT, " +               // income / outcome
@@ -56,6 +57,7 @@ public class FinzuDatabaseHelper extends SQLiteOpenHelper {
                 "account_id INTEGER, " +
                 "details TEXT, " +
                 "date TEXT, " +
+                "active INTEGER DEFAULT 1, " +
                 "FOREIGN KEY(account_id) REFERENCES accounts(id) ON DELETE CASCADE" +
                 ")";
         db.execSQL(createTransactionTable);
@@ -63,6 +65,5 @@ public class FinzuDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Por ahora sin implementación de migraciones
     }
 }
