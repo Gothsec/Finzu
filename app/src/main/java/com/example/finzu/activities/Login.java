@@ -19,7 +19,7 @@ public class Login extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private TextView btnLogin, tvRegister;
-    private NavigationUtils navUtils;
+    private NavigationUtils navUtils = new NavigationUtils();
 
 
     @Override
