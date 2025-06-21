@@ -54,7 +54,7 @@ public class TransactionRepository {
     public List<Transaction> getTransactionsByAccountId(int accountId) {
         List<Transaction> transactions = new ArrayList<>();
         Cursor cursor = db.rawQuery(
-                "SELECT * FROM transactions WHERE account_id = ? ORDER BY date DESC",
+                "SELECT * FROM transactions WHERE account_id = ? AND active = 1 ORDER BY date DESC",
                 new String[]{String.valueOf(accountId)}
         );
 
@@ -79,12 +79,11 @@ public class TransactionRepository {
     public List<Transaction> getTransactionsByFilters(int accountId, String monthYear, String type) {
         List<Transaction> transactions = new ArrayList<>();
 
-        // Ya tienes db inicializado, úsalo directamente
-        String sql = "SELECT * FROM transactions WHERE account_id = ? AND type = ? AND strftime('%m-%Y', date) = ?";
+        String sql = "SELECT * FROM transactions WHERE account_id = ? AND type = ? AND strftime('%m-%Y', date) = ? AND active = 1";
         String[] selectionArgs = {
                 String.valueOf(accountId),
                 type,
-                monthYear  // Por ejemplo: "06-2025"
+                monthYear
         };
 
         Cursor cursor = db.rawQuery(sql, selectionArgs);
@@ -107,13 +106,21 @@ public class TransactionRepository {
         return transactions;
     }
 
+    public void updateTransaction(Transaction transaction) {
+        ContentValues values = new ContentValues();
+        values.put("amount", transaction.getAmount());
+        values.put("type", transaction.getType());
+        values.put("account_id", transaction.getAccountId());
+        values.put("details", transaction.getDetails());
+        values.put("date", transaction.getDate());
 
-    public void deleteTransaction(int id) {
-        db.delete("transactions", "id = ?", new String[]{String.valueOf(id)});
+        db.update("transactions", values, "id = ?", new String[]{String.valueOf(transaction.getId())});
     }
 
-    public void deleteAllForAccount(int accountId) {
-        db.delete("transactions", "account_id = ?", new String[]{String.valueOf(accountId)});
+    public void softDeleteTransaction(int id) {
+        ContentValues values = new ContentValues();
+        values.put("active", 0);
+        db.update("transactions", values, "id = ?", new String[]{String.valueOf(id)});
     }
 
     public void close() {
