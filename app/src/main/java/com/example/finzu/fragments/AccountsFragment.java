@@ -74,7 +74,7 @@ public class AccountsFragment extends Fragment {
             repo.close();
         }
 
-        tvBalance.setText(String.format("Balance total: $ %.2f", totalBalance));
+        tvBalance.setText(String.format("$ %.2f", totalBalance));
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(new AccountAdapter(cuentas));
     }
