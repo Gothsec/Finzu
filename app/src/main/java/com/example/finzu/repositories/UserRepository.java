@@ -52,7 +52,7 @@ public class UserRepository {
     }
 
     public User getUserByEmail(String email) {
-        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{email});
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ? AND active = 1", new String[]{email});
         if (cursor.moveToFirst()) {
             User user = createUserFromCursor(cursor);
             cursor.close();
@@ -80,6 +80,24 @@ public class UserRepository {
         double balance = cursor.getDouble(cursor.getColumnIndexOrThrow("balance"));
 
         return new User(id, fullName, email, password, profilePic, currency, reminderHour, reminder, balance, true);
+    }
+
+    public void updateUserProfile(String email, String newName, String newPassword, String profilePicUrl, String currency, boolean reminder, String reminderHour) {
+        ContentValues values = new ContentValues();
+        values.put("full_name", newName);
+        values.put("password", newPassword);
+        values.put("profile_pic_url", profilePicUrl);
+        values.put("currency", currency);
+        values.put("reminder", reminder ? "on" : "off");
+        values.put("reminder_hour", reminderHour);
+
+        db.update("users", values, "email = ?", new String[]{email});
+    }
+
+    public void softDeleteUser(String email) {
+        ContentValues values = new ContentValues();
+        values.put("active", 0);
+        db.update("users", values, "email = ?", new String[]{email});
     }
 
     public void close() {
