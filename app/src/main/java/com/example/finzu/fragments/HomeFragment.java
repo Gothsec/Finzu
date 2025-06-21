@@ -1,6 +1,9 @@
 package com.example.finzu.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ import com.example.finzu.models.Transaction;
 import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.repositories.TransactionRepository;
 import com.example.finzu.session.UserSession;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -108,6 +114,57 @@ public class HomeFragment extends Fragment {
             transaction.addToBackStack(null);
             transaction.commit();
         });
+
+        SharedPreferences prefs = requireContext().getSharedPreferences("finzu_prefs", Context.MODE_PRIVATE);
+        boolean tutorialShown = prefs.getBoolean("tutorial_home_shown", false);
+
+        if (!tutorialShown) {
+            new Handler().postDelayed(() -> {
+                FloatingActionButton fab_tutorial = requireActivity().findViewById(R.id.fab_add);
+                LinearLayout linear_menu_tutorial = view.findViewById(R.id.fab_menu);
+                View btn_import_tutorial = requireActivity().findViewById(R.id.btn_import);
+
+                linear_menu_tutorial.setVisibility(View.VISIBLE);
+
+                TapTargetSequence sequence = new TapTargetSequence(requireActivity())
+                        .targets(
+                                TapTarget.forView(fab_tutorial, "Nuevo Registro", "Toca aquí para añadir un nuevo ingreso o gasto")
+                                        .outerCircleColor(R.color.white)
+                                        .targetCircleColor(android.R.color.white)
+                                        .titleTextColor(android.R.color.white)
+                                        .descriptionTextColor(android.R.color.white)
+                                        .drawShadow(false)
+                                        .cancelable(false)
+                                        .tintTarget(true),
+
+                                TapTarget.forView(btn_import_tutorial, "Formulario", "Aquí puedes llenar el formulario para registrar un nuevo movimiento.")
+                                        .outerCircleColor(R.color.white)
+                                        .targetCircleColor(android.R.color.white)
+                                        .titleTextColor(android.R.color.white)
+                                        .descriptionTextColor(android.R.color.white)
+                                        .drawShadow(false)
+                                        .cancelable(true)
+                                        .tintTarget(false)
+                        )
+                        .listener(new TapTargetSequence.Listener() {
+                            @Override
+                            public void onSequenceFinish() {
+                                // Marcar que el tutorial ya se mostró
+                                prefs.edit().putBoolean("tutorial_home_shown", true).apply();
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {}
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget lastTarget) {}
+                        });
+
+                sequence.start();
+            }, 500);
+        }
+
+
     }
 
     @Override
