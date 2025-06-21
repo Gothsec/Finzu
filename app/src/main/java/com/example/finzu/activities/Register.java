@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finzu.R;
 import com.example.finzu.repositories.UserRepository;
+import com.example.finzu.utils.NavigationUtils;
 import com.example.finzu.utils.ToastUtils;
 import com.example.finzu.utils.ValidationUtils;
 
@@ -16,6 +17,7 @@ public class Register extends AppCompatActivity {
 
     private EditText etName, etEmail, etPassword;
     private TextView btnRegister;
+    private NavigationUtils navUtils = new NavigationUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +30,12 @@ public class Register extends AppCompatActivity {
         btnRegister = findViewById(R.id.btn_register);
 
         btnRegister.setOnClickListener(v -> {
+            // Get data
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            // Validate data
             if (name.isEmpty() || !ValidationUtils.areLoginFieldsValid(email, password)) {
                 ToastUtils.showShort(this, "Completa correctamente todos los campos");
                 return;
@@ -45,13 +49,13 @@ public class Register extends AppCompatActivity {
                 return;
             }
 
+            // Register user (create user in database)
             boolean success = userRepo.registerUser(name, email, password);
             userRepo.close();
 
             if (success) {
-                ToastUtils.showShort(this, "Cuenta creada para " + name);
-                startActivity(new Intent(this, Login.class));
-                finish();
+                ToastUtils.showLong(this, "Cuenta creada para " + name);
+                navUtils.changeActivityAndFinish(this, Login.class);
             } else {
                 ToastUtils.showShort(this, "Error al registrar");
             }
