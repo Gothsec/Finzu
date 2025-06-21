@@ -226,8 +226,8 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        tvIngresosMes.setText(String.format("Ingresos: $ %.2f", totalIngresos));
-        tvGastosMes.setText(String.format("Gastos: $ %.2f", totalGastos));
+        tvIngresosMes.setText(String.format("$ %.2f", totalIngresos));
+        tvGastosMes.setText(String.format("$ %.2f", totalGastos));
     }
 
     private void loadTransactions() {
