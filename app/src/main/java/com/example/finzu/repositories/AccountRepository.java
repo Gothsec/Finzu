@@ -29,7 +29,7 @@ public class AccountRepository {
 
     public List<Account> getAccountsByUserEmail(String userEmail) {
         List<Account> accounts = new ArrayList<>();
-        Cursor cursor = db.rawQuery("SELECT * FROM accounts WHERE user_email = ?", new String[]{userEmail});
+        Cursor cursor = db.rawQuery("SELECT * FROM accounts WHERE user_email = ? AND active = 1", new String[]{userEmail});
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
@@ -51,7 +51,7 @@ public class AccountRepository {
     }
 
     public Account getAccountById(int accountId) {
-        Cursor cursor = db.rawQuery("SELECT * FROM accounts WHERE id = ?", new String[]{String.valueOf(accountId)});
+        Cursor cursor = db.rawQuery("SELECT * FROM accounts WHERE id = ? AND active = 1", new String[]{String.valueOf(accountId)});
         if (cursor.moveToFirst()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
             String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
@@ -62,6 +62,18 @@ public class AccountRepository {
         }
         cursor.close();
         return null;
+    }
+
+    public void updateAccountName(int accountId, String newName) {
+        ContentValues values = new ContentValues();
+        values.put("name", newName);
+        db.update("accounts", values, "id = ?", new String[]{String.valueOf(accountId)});
+    }
+
+    public void deleteAccount(int accountId) {
+        ContentValues values = new ContentValues();
+        values.put("active", 0);
+        db.update("accounts", values, "id = ?", new String[]{String.valueOf(accountId)});
     }
 
     public void close() {
