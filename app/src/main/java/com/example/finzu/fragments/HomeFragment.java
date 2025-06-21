@@ -1,6 +1,9 @@
 package com.example.finzu.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ import com.example.finzu.models.Transaction;
 import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.repositories.TransactionRepository;
 import com.example.finzu.session.UserSession;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -108,6 +114,107 @@ public class HomeFragment extends Fragment {
             transaction.addToBackStack(null);
             transaction.commit();
         });
+
+        SharedPreferences prefs = requireContext().getSharedPreferences("finzu_prefs", Context.MODE_PRIVATE);
+        boolean tutorialShown = prefs.getBoolean("tutorial_home_shown", false);
+
+        if (!tutorialShown) {
+            new Handler().postDelayed(() -> {
+                FloatingActionButton fab_tutorial = requireActivity().findViewById(R.id.fab_add);
+                LinearLayout linear_menu_tutorial = view.findViewById(R.id.fab_menu);
+
+                View title_tutorial = view.findViewById(R.id.title);
+                View btn_import_tutorial = requireActivity().findViewById(R.id.btn_import);
+                View btn_scan_tutorial = requireActivity().findViewById(R.id.btn_scan);
+                View btn_new_tutorial = requireActivity().findViewById(R.id.btn_new);
+                View btn_accounts_tutorial = view.findViewById(R.id.btn_accounts);
+
+                linear_menu_tutorial.setVisibility(View.VISIBLE);
+
+                TapTarget firstTarget = TapTarget.forView(
+                                title_tutorial,
+                                "¡Bienvenido!",
+                                "Te daremos un tour por la app para ayudarte a navegar mejor y mejorar tu experiencia de uso."
+                        )
+                        .id(1)
+                        .outerCircleColor(R.color.green)
+                        .targetCircleColor(R.color.green)
+                        .titleTextColor(android.R.color.white)
+                        .descriptionTextColor(android.R.color.white)
+                        .drawShadow(false)
+                        .cancelable(true)
+                        .tintTarget(false);
+
+                TapTargetView.showFor(requireActivity(), firstTarget, new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        TapTargetSequence sequence = new TapTargetSequence(requireActivity())
+                                .targets(
+                                        TapTarget.forView(fab_tutorial, "Botón agregar", "Toca aquí para desplegar múltiples opciones")
+                                                .outerCircleColor(R.color.green)
+                                                .targetCircleColor(android.R.color.transparent)
+                                                .titleTextColor(android.R.color.white)
+                                                .descriptionTextColor(android.R.color.white)
+                                                .drawShadow(false)
+                                                .cancelable(false)
+                                                .tintTarget(false),
+
+                                        TapTarget.forView(btn_import_tutorial, "Importar datos", "Aquí puedes importar datos desde un archivo CSV o Excel")
+                                                .outerCircleColor(R.color.green)
+                                                .targetCircleColor(R.color.green)
+                                                .titleTextColor(android.R.color.white)
+                                                .descriptionTextColor(android.R.color.white)
+                                                .drawShadow(false)
+                                                .cancelable(false)
+                                                .tintTarget(false),
+
+                                        TapTarget.forView(btn_scan_tutorial, "Escanear factura", "Desde aquí escaneas una factura para añadir un nuevo registro")
+                                                .outerCircleColor(R.color.green)
+                                                .targetCircleColor(R.color.green)
+                                                .titleTextColor(android.R.color.white)
+                                                .descriptionTextColor(android.R.color.white)
+                                                .drawShadow(false)
+                                                .cancelable(false)
+                                                .tintTarget(false),
+
+                                        TapTarget.forView(btn_new_tutorial, "Nuevo registro", "Aquí puedes añadir un nuevo ingreso o gasto")
+                                                .outerCircleColor(R.color.green)
+                                                .targetCircleColor(R.color.green)
+                                                .titleTextColor(android.R.color.white)
+                                                .descriptionTextColor(android.R.color.white)
+                                                .drawShadow(false)
+                                                .cancelable(false)
+                                                .tintTarget(false),
+
+                                        TapTarget.forView(btn_accounts_tutorial, "Cuentas", "Aquí puedes crear y administrar tus cuentas financieras. Echemos un vistazo")
+                                                .outerCircleColor(R.color.green)
+                                                .targetCircleColor(R.color.green)
+                                                .titleTextColor(android.R.color.white)
+                                                .descriptionTextColor(android.R.color.white)
+                                                .drawShadow(false)
+                                                .cancelable(false)
+                                                .tintTarget(false)
+                                )
+                                .listener(new TapTargetSequence.Listener() {
+                                    @Override
+                                    public void onSequenceFinish() {
+                                        prefs.edit().putBoolean("tutorial_home_shown", true).apply();
+                                    }
+
+                                    @Override
+                                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {}
+
+                                    @Override
+                                    public void onSequenceCanceled(TapTarget lastTarget) {}
+                                });
+
+                        sequence.start();
+                    }
+                });
+
+            }, 500);
+        }
+
     }
 
     @Override
