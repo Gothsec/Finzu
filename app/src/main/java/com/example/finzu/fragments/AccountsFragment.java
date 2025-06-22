@@ -16,15 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finzu.R;
 import com.example.finzu.adapters.AccountAdapter;
-import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.models.Account;
+import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.session.UserSession;
+import com.example.finzu.utils.NavigationUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class AccountsFragment extends Fragment {
+public class AccountsFragment extends Fragment implements AccountAdapter.OnAccountActionListener {
 
+    NavigationUtils navigationUtils = new NavigationUtils();
     public AccountsFragment() {}
 
     @Nullable
@@ -76,6 +78,32 @@ public class AccountsFragment extends Fragment {
 
         tvBalance.setText(String.format("$ %.2f", totalBalance));
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setAdapter(new AccountAdapter(cuentas));
+        recyclerView.setAdapter(new AccountAdapter(cuentas, this));
+    }
+
+    @Override
+    public void onEdit(Account account) {
+        EditAccountFragment fragment = EditAccountFragment.newInstance(account);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onDelete(Account account) {
+        ConfirmDeleteAccountDialog dialog = new ConfirmDeleteAccountDialog(account.getId(), accountId -> {
+            AccountRepository repo = new AccountRepository(requireContext());
+            repo.deleteAccount(accountId);
+            repo.close();
+
+            // Refresh fragment
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new AccountsFragment())
+                    .commit();
+        });
+        dialog.show(getParentFragmentManager(), "ConfirmDeleteAccountDialog");
     }
 }
