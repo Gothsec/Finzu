@@ -23,26 +23,4 @@ public class Home extends AppCompatActivity {
                     .commit();
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-            getSupportFragmentManager().executePendingTransactions();
-
-            Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-            View fab = findViewById(R.id.fab_add);
-            if (fab != null) {
-                if (current instanceof HomeFragment) {
-                    fab.setVisibility(View.VISIBLE);
-                } else {
-                    fab.setVisibility(View.GONE);
-                }
-            }
-        } else {
-            super.onBackPressed();
-        }
-    }
-
 }
