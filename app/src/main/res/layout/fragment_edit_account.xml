@@ -16,7 +16,7 @@
         android:layout_marginBottom="12dp" />
 
     <EditText
-        android:id="@+id/et_new_account_name"
+        android:id="@+id/et_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nuevo nombre"
@@ -25,10 +25,18 @@
         android:background="@android:drawable/edit_text" />
 
     <Button
-        android:id="@+id/btn_save_account_name"
+        android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guardar cambios"
+        android:text="Guardar"
         android:layout_marginTop="16dp" />
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancelar"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:layout_marginTop="16dp" />
+
 
 </LinearLayout>
