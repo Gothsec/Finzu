@@ -75,20 +75,22 @@
                 android:id="@+id/spinner_cuenta"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:popupBackground="#1C1C1C"
-                android:backgroundTint="#333333"
                 android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#fff"
+                android:foregroundTint="#fff"
+                android:popupBackground="#1C1C1C"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
             <Spinner
                 android:id="@+id/spinner_mes"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:popupBackground="#1C1C1C"
-                android:backgroundTint="#333333"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="#fff"
+                android:foregroundTint="#fff"
+                android:popupBackground="#1C1C1C"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark" />
         </LinearLayout>
 

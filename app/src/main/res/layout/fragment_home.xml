@@ -70,7 +70,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentStart="true"
                         android:src="@drawable/ic_accounts"
-                        android:tint="#FFFFFF" />
+                        app:tint="#FFFFFF" />
 
                     <TextView
                         android:id="@+id/text_accounts"
@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
-                android:overScrollMode="never"
+                android:overScrollMode="ifContentScrolls"
                 android:nestedScrollingEnabled="false" />
 
             <!-- Día -->

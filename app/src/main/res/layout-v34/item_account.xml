@@ -8,9 +8,9 @@
     android:elevation="0dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="12dp"
-    app:cardBackgroundColor="#1f1f1f"
+    app:cardBackgroundColor="@android:color/system_surface_container_dark"
     app:cardCornerRadius="16dp"
-    app:contentPadding="24dp">
+    app:contentPadding="20dp">
 
     <RelativeLayout
         android:layout_width="match_parent"

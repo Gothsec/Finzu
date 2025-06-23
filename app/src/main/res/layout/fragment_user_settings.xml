@@ -74,9 +74,9 @@
                 android:id="@+id/et_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
                 android:background="@android:drawable/edit_text"
-                android:hint="Nombre de usuario" />
+                android:hint="Nombre de usuario"
+                android:textColor="#000" />
 
             <TextView
                 android:text="Correo (no editable)"
@@ -105,10 +105,10 @@
                 android:id="@+id/et_user_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:drawable/edit_text"
                 android:hint="Nueva contraseña"
                 android:inputType="textPassword"
-                android:background="@android:drawable/edit_text"
-                android:textColor="#FFFFFF" />
+                android:textColor="#000" />
 
             <Button
                 android:id="@+id/btn_save_user"
@@ -221,10 +221,10 @@
                     android:id="@+id/et_reminder_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="HH:mm"
-                    android:focusable="false"
                     android:background="@android:drawable/edit_text"
-                    android:textColor="#FFFFFF" />
+                    android:focusable="false"
+                    android:hint="HH:mm"
+                    android:textColor="#000" />
             </LinearLayout>
 
             <Switch

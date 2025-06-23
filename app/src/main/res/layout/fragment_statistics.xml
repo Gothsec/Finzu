@@ -16,7 +16,7 @@
             android:id="@+id/chartTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resumen: Ingresos vs Gastos"
+            android:text="Gráficos estadísticos"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -26,26 +26,26 @@
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barChart"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:background="#0D0D0D"
+            android:layout_height="220dp"
             android:layout_marginBottom="32dp"
-            android:padding="8dp"
-            android:elevation="6dp" />
+            android:background="#fff"
+            android:elevation="6dp"
+            android:padding="8dp" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#FAFAFA"
+            android:layout_height="220dp"
             android:layout_marginBottom="24dp"
+            android:background="#fff"
             android:elevation="4dp" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/accountChart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#FAFAFA"
+            android:layout_height="220dp"
             android:layout_marginBottom="24dp"
+            android:background="#fff"
             android:elevation="4dp" />
 
 

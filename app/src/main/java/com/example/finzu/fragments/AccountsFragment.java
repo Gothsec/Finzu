@@ -87,7 +87,6 @@ public class AccountsFragment extends Fragment implements AccountAdapter.OnAccou
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
                 .commit();
     }
 

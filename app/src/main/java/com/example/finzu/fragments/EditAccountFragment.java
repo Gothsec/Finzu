@@ -63,12 +63,20 @@ public class EditAccountFragment extends DialogFragment {
                 AccountRepository repo = new AccountRepository(requireContext());
                 repo.updateAccountName(accountId, newName);
                 repo.close();
-                dismiss();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new AccountsFragment())
+                        .commit();
             } else {
                 etName.setError("El nombre no puede estar vacío");
             }
         });
 
-        btnCancel.setOnClickListener(v -> dismiss());
+        btnCancel.setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new AccountsFragment())
+                    .commit();
+        });
     }
 }
