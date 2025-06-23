@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements TransactionAdapter.OnTransactionClickListener {
 
     private TextView tvBalanceValue;
     private TextView tvIngresosMes;
@@ -294,7 +294,23 @@ public class HomeFragment extends Fragment {
             allTransactions.addAll(transactionRepo.getTransactionsByAccountId(acc.getId()));
         }
 
-        transactionAdapter = new TransactionAdapter(allTransactions);
+        transactionAdapter = new TransactionAdapter(allTransactions, (TransactionAdapter.OnTransactionClickListener) this);
         recyclerTransactions.setAdapter(transactionAdapter);
+    }
+
+    @Override
+    public void onEdit(Transaction transaction) {
+        EditTransactionFragment fragment = EditTransactionFragment.newInstance(transaction);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onDelete(Transaction transaction) {
+        DeleteTransactionDialog dialog = DeleteTransactionDialog.newInstance(transaction.getId());
+        dialog.show(getParentFragmentManager(), "DeleteTransactionDialog");
     }
 }
