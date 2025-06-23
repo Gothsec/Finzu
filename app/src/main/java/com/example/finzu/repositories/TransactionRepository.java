@@ -106,6 +106,36 @@ public class TransactionRepository {
         return transactions;
     }
 
+    public List<Transaction> getTransactionsByUserEmail(String email) {
+        List<Transaction> transactions = new ArrayList<>();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT t.id, t.amount, t.type, t.account_id, t.details, t.date, t.active " +
+                        "FROM transactions t " +
+                        "JOIN accounts a ON t.account_id = a.id " +
+                        "WHERE a.user_email = ?",
+                new String[]{email}
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                double amount = cursor.getDouble(1);
+                String type = cursor.getString(2);
+                int accountId = cursor.getInt(3);
+                String details = cursor.getString(4);
+                String date = cursor.getString(5);
+                boolean active = cursor.getInt(6) == 1;
+
+                transactions.add(new Transaction(id, amount, type, accountId, details, date, active));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return transactions;
+    }
+
+
     public String getUserEmailByTransactionId(int transactionId) {
         String email = null;
 
