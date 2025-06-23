@@ -3,73 +3,97 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="#0D0D0D">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Título -->
         <TextView
             android:text="Editar transacción"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="24dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
+        <!-- Monto -->
         <EditText
             android:id="@+id/et_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Cantidad"
             android:inputType="numberDecimal"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="14dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAAAAA"
+            android:backgroundTint="@color/green"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Tipo -->
         <Spinner
             android:id="@+id/spn_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:backgroundTint="@color/green"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Cuenta -->
         <Spinner
             android:id="@+id/spn_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:backgroundTint="@color/green"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Detalles -->
         <EditText
             android:id="@+id/et_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Detalles"
             android:inputType="textCapSentences"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="12dp" />
+            android:padding="14dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAAAAA"
+            android:backgroundTint="@color/green"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Fecha -->
         <EditText
             android:id="@+id/et_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Fecha (yyyy-MM-dd)"
             android:focusable="false"
-            android:padding="12dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="16dp" />
+            android:padding="14dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="#AAAAAA"
+            android:backgroundTint="@color/green"
+            android:layout_marginBottom="24dp" />
 
+        <!-- Botón Guardar -->
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Guardar" />
+            android:text="Guardar cambios"
+            android:backgroundTint="@color/green"
+            android:textColor="@android:color/white"
+            android:elevation="4dp"
+            android:layout_marginBottom="12dp" />
 
+        <!-- Botón Cancelar -->
         <Button
             android:id="@+id/btn_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cancelar" />
+            android:text="Cancelar"
+            android:backgroundTint="#666666"
+            android:textColor="@android:color/white"
+            android:elevation="2dp" />
     </LinearLayout>
 </ScrollView>

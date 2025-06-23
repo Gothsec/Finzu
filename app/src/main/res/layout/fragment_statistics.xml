@@ -2,32 +2,35 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:background="#0D0D0D">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
-        <!-- Títle -->
+        <!-- Título -->
         <TextView
             android:id="@+id/chartTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resumen Ingresos vs Gastos"
-            android:textSize="18sp"
+            android:text="Resumen: Ingresos vs Gastos"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="24dp" />
 
-        <!-- Bar chart -->
+        <!-- Gráfico de barras -->
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barChart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#FAFAFA"
-            android:layout_marginBottom="24dp"
-            android:elevation="4dp" />
+            android:layout_height="320dp"
+            android:background="#0D0D0D"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
+            android:elevation="6dp" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
