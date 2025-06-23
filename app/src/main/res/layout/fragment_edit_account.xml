@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="24dp"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#0D0D0D">
 
     <TextView
         android:id="@+id/tv_edit_title"
@@ -13,6 +13,7 @@
         android:text="Editar cuenta"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
         android:layout_marginBottom="12dp" />
 
     <EditText
@@ -22,13 +23,17 @@
         android:hint="Nuevo nombre"
         android:inputType="textCapWords"
         android:padding="12dp"
-        android:background="@android:drawable/edit_text" />
+        android:textColor="@android:color/white"
+        android:textColorHint="#AAAAAA"
+        android:backgroundTint="@color/green"
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/btn_save_account_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar cambios"
-        android:layout_marginTop="16dp" />
-
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/green"
+        android:elevation="4dp" />
 </LinearLayout>
