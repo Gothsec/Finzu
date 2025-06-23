@@ -1,35 +1,84 @@
-<!-- res/layout/item_transaction.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="12dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#1A1A1A">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardBackgroundColor="@color/black"
+    android:elevation="0dp"
+    android:padding="12dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/tv_amount"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_type"
-        android:textColor="#DDDDDD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/transaction_info_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_date"
-        android:textColor="#AAAAAA"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tv_details"
-        android:textColor="#CCCCCC"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00"
+                android:textColor="#66FF66"
+                android:textSize="15sp"
+                android:layout_marginTop="4dp" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/tv_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalles"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_edit_transaction"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="48dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_edit"
+            android:contentDescription="Editar"
+            app:tint="#ffffff" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_transaction"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete"
+            android:contentDescription="Eliminar"
+            app:tint="@android:color/holo_red_dark" />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
