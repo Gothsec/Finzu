@@ -52,24 +52,23 @@
             android:background="#1E1E1E"
             android:padding="16dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#1E1E1E"
             android:elevation="2dp">
 
             <TextView
                 android:text="Cuenta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:text="Nombre"
-                android:textColor="#AAAAAA"
-                android:textSize="12sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+                android:textColor="#AAAAAA"
+                android:textSize="12sp" />
 
             <EditText
                 android:id="@+id/et_user_name"
@@ -77,30 +76,30 @@
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
                 android:background="@android:drawable/edit_text"
-                android:hint="Nombre de usuario"/>
+                android:hint="Nombre de usuario" />
 
             <TextView
                 android:text="Correo (no editable)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#AAAAAA"
                 android:textSize="12sp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="12dp"/>
+                android:layout_marginTop="12dp" />
 
             <TextView
                 android:id="@+id/tv_user_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="m.jackson@gmail.com"
-                android:textColor="#FFFFFF"/>
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:text="Contraseña"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#AAAAAA"
                 android:textSize="12sp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="12dp"/>
+                android:layout_marginTop="12dp" />
 
             <EditText
                 android:id="@+id/et_user_password"
@@ -109,7 +108,16 @@
                 android:hint="Nueva contraseña"
                 android:inputType="textPassword"
                 android:background="@android:drawable/edit_text"
-                android:textColor="#FFFFFF"/>
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btn_save_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guardar cambios"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/btn_delete_account"
@@ -118,7 +126,7 @@
                 android:text="Eliminar cuenta"
                 android:textColor="#FFFFFF"
                 android:backgroundTint="#B71C1C"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="8dp" />
         </LinearLayout>
 
         <!-- Change currency -->
@@ -132,12 +140,12 @@
 
             <TextView
                 android:text="Cambiar moneda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <RadioGroup
                 android:id="@+id/rg_currency"
@@ -145,26 +153,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <RadioButton android:id="@+id/rb_cop"
+                <RadioButton
+                    android:id="@+id/rb_cop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="COP"
                     android:textColor="#FFFFFF"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp" />
 
-                <RadioButton android:id="@+id/rb_usd"
+                <RadioButton
+                    android:id="@+id/rb_usd"
                     android:text="USD"
                     android:textColor="#FFFFFF"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp" />
 
-                <RadioButton android:id="@+id/rb_eur"
-                    android:text="EUR"
-                    android:layout_height="wrap_content"
+                <RadioButton
+                    android:id="@+id/rb_eur"
                     android:layout_width="wrap_content"
-                    android:textColor="#FFFFFF"/>
+                    android:layout_height="wrap_content"
+                    android:text="EUR"
+                    android:textColor="#FFFFFF" />
             </RadioGroup>
+
+            <Button
+                android:id="@+id/btn_apply_currency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aplicar"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <!-- Notification -->
@@ -177,12 +197,12 @@
 
             <TextView
                 android:text="Recordatorio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -195,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:text="Hora:"
                     android:textColor="#FFFFFF"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp" />
 
                 <EditText
                     android:id="@+id/et_reminder_hour"
@@ -204,7 +224,7 @@
                     android:hint="HH:mm"
                     android:focusable="false"
                     android:background="@android:drawable/edit_text"
-                    android:textColor="#FFFFFF"/>
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
 
             <Switch
@@ -213,7 +233,16 @@
                 android:layout_height="wrap_content"
                 android:text="Activar"
                 android:textColor="#FFFFFF"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btn_save_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guardar recordatorio"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
     </LinearLayout>
