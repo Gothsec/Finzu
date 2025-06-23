@@ -32,5 +32,22 @@
             android:padding="8dp"
             android:elevation="6dp" />
 
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#FAFAFA"
+            android:layout_marginBottom="24dp"
+            android:elevation="4dp" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/accountChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#FAFAFA"
+            android:layout_marginBottom="24dp"
+            android:elevation="4dp" />
+
+
     </LinearLayout>
 </ScrollView>

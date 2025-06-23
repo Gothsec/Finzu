@@ -82,18 +82,30 @@ public class UserRepository {
         return new User(id, fullName, email, password, profilePic, currency, reminderHour, reminder, balance, true);
     }
 
-    public void updateUserProfile(String email, String newName, String newPassword, String profilePicUrl, String currency, boolean reminder, String reminderHour) {
+    public void updateUserName(String email, String newName) {
         ContentValues values = new ContentValues();
         values.put("full_name", newName);
-        values.put("password", newPassword);
-        values.put("profile_pic_url", profilePicUrl);
-        values.put("currency", currency);
-        values.put("reminder", reminder ? "on" : "off");
-        values.put("reminder_hour", reminderHour);
-
         db.update("users", values, "email = ?", new String[]{email});
     }
 
+    public void updateUserPassword(String email, String newPassword) {
+        ContentValues values = new ContentValues();
+        values.put("password", newPassword);
+        db.update("users", values, "email = ?", new String[]{email});
+    }
+
+    public void updateUserCurrency(String email, String newCurrency) {
+        ContentValues values = new ContentValues();
+        values.put("currency", newCurrency);
+        db.update("users", values, "email = ?", new String[]{email});
+    }
+
+    public void updateNotificationSettings(String email, boolean enabled, String time) {
+        ContentValues values = new ContentValues();
+        values.put("reminder", enabled ? "on" : "off");
+        values.put("reminder_hour", time);
+        db.update("users", values, "email = ?", new String[]{email});
+    }
     public void softDeleteUser(String email) {
         ContentValues values = new ContentValues();
         values.put("active", 0);

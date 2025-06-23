@@ -1,10 +1,12 @@
 package com.example.finzu.session;
 
+import android.content.Context;
+
 import com.example.finzu.models.User;
 
 public class UserSession {
     private static UserSession instance;
-    private User user;
+    private static User user;
 
     private UserSession() {}
 
@@ -19,11 +21,11 @@ public class UserSession {
         this.user = user;
     }
 
-    public User getUser() {
+    public static User getUser() {
         return user;
     }
 
-    public void clearSession() {
+    public static void clearSession(Context context) {
         user = null;
     }
 }

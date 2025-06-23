@@ -39,7 +39,8 @@ dependencies {
     implementation(libs.constraintlayout)
 
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

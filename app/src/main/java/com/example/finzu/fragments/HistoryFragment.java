@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements TransactionAdapter.OnTransactionClickListener {
 
     private RadioGroup radioGroupTipo;
     private Spinner spinnerCuenta, spinnerMes;
@@ -147,7 +147,7 @@ public class HistoryFragment extends Fragment {
             Toast.makeText(getContext(), "No hay transacciones para los filtros seleccionados.", Toast.LENGTH_SHORT).show();
         }
 
-        TransactionAdapter adapter = new TransactionAdapter(resultados);
+        TransactionAdapter adapter = new TransactionAdapter(resultados, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -176,5 +176,21 @@ public class HistoryFragment extends Fragment {
         }
 
         return mes + "-" + anio;
+    }
+
+    @Override
+    public void onEdit(Transaction transaction) {
+        EditTransactionFragment fragment = EditTransactionFragment.newInstance(transaction);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onDelete(Transaction transaction) {
+        DeleteTransactionDialog dialog = DeleteTransactionDialog.newInstance(transaction.getId());
+        dialog.show(getParentFragmentManager(), "DeleteTransactionDialog");
     }
 }
