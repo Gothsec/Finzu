@@ -148,7 +148,52 @@ public class TransactionRepository {
         cursor.close();
     }
 
+    private void adjustUserBalance(String userEmail, double amount, String type) {
+        Cursor cursor = db.rawQuery("SELECT balance FROM users WHERE email = ?", new String[]{userEmail});
+        if (cursor.moveToFirst()) {
+            double currentAmount = cursor.getDouble(cursor.getColumnIndexOrThrow("balance"));
+            double newAmount = type.trim().equalsIgnoreCase("ingreso") ? currentAmount + amount : currentAmount - amount;
+
+            ContentValues values = new ContentValues();
+            values.put("balance", newAmount);
+            db.update("users", values, "email = ?", new String[]{userEmail});
+        }
+        cursor.close();
+    }
+
+    private void revertUserBalance(String userEmail, double amount, String type) {
+        adjustUserBalance(userEmail, amount, type.equalsIgnoreCase("ingreso") ? "gasto" : "ingreso");
+    }
+
+
     public void updateTransaction(Transaction transaction) {
+        // 1. get old transaction
+        Cursor oldCursor = db.rawQuery("SELECT amount, type, account_id FROM transactions WHERE id = ?", new String[]{String.valueOf(transaction.getId())});
+        if (oldCursor.moveToFirst()) {
+            double oldAmount = oldCursor.getDouble(oldCursor.getColumnIndexOrThrow("amount"));
+            String oldType = oldCursor.getString(oldCursor.getColumnIndexOrThrow("type")).trim().toLowerCase();
+            int oldAccountId = oldCursor.getInt(oldCursor.getColumnIndexOrThrow("account_id"));
+
+            // 2. get user eamil
+            String userEmail = null;
+            Cursor accCursor = db.rawQuery("SELECT user_email FROM accounts WHERE id = ?", new String[]{String.valueOf(oldAccountId)});
+            if (accCursor.moveToFirst()) {
+                userEmail = accCursor.getString(accCursor.getColumnIndexOrThrow("user_email"));
+            }
+            accCursor.close();
+
+            if (userEmail != null) {
+                revertAccountAmount(oldAccountId, oldAmount, oldType);
+                revertUserAmount(userEmail, oldAmount, oldType);
+
+                // 3. apply to new transaction
+                adjustAccountAmount(transaction.getAccountId(), transaction.getAmount(), transaction.getType());
+                adjustUserBalance(userEmail, transaction.getAmount(), transaction.getType());
+            }
+        }
+        oldCursor.close();
+
+        // 5. update transaction on database
         ContentValues values = new ContentValues();
         values.put("amount", transaction.getAmount());
         values.put("type", transaction.getType());
