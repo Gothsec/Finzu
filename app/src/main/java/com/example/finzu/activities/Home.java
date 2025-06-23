@@ -1,26 +1,53 @@
 package com.example.finzu.activities;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.finzu.fragments.HomeFragment;
 import com.example.finzu.R;
+import com.example.finzu.fragments.GraphsFragment;
+import com.example.finzu.fragments.HomeFragment;
+import com.example.finzu.fragments.SettingsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Home extends AppCompatActivity {
+
+    private BottomNavigationView bottomNav;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home); // debe contener un contenedor de fragmentos
+        setContentView(R.layout.activity_main);
 
-        // Carga el fragmento Home al iniciar
+        bottomNav = findViewById(R.id.bottom_nav);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
+
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                selectedFragment = new HomeFragment();
+            } else if (itemId == R.id.nav_chart) {
+                selectedFragment = new GraphsFragment();
+            } else if (itemId == R.id.nav_settings) {
+                selectedFragment = new SettingsFragment();
+            }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .commit();
+                return true;
+            }
+
+            return false;
+        });
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
-                    .commit();
+            bottomNav.setSelectedItemId(R.id.nav_home);
         }
     }
 }
