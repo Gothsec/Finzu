@@ -1,18 +1,33 @@
 package com.example.finzu.fragments;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,12 +44,27 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HomeFragment extends Fragment implements TransactionAdapter.OnTransactionClickListener {
+
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private Uri photoUri;
 
     private TextView tvBalanceValue;
     private TextView tvIngresosMes;
@@ -103,7 +133,7 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
         });
 
         btnScan.setOnClickListener(v -> {
-            // Acción futura: escanear factura
+            checkCameraPermissionAndOpenCamera();
         });
 
         btnNew.setOnClickListener(v -> {
@@ -214,7 +244,298 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
 
             }, 500);
         }
+    }
 
+    private void checkCameraPermissionAndOpenCamera() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        } else {
+            openCamera();
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            Log.d("HomeFragment", "Cámara disponible, creando archivo...");
+
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+                Log.d("HomeFragment", "Archivo creado: " + photoFile.getAbsolutePath());
+            } catch (IOException ex) {
+                Log.e("HomeFragment", "Error creando archivo", ex);
+                Toast.makeText(requireContext(), "Error al crear archivo de imagen", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (photoFile != null) {
+                try {
+                    photoUri = FileProvider.getUriForFile(
+                            requireContext(),
+                            requireContext().getPackageName() + ".provider",
+                            photoFile
+                    );
+                    Log.d("HomeFragment", "URI creado: " + photoUri.toString());
+
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                } catch (Exception e) {
+                    Log.e("HomeFragment", "Error con FileProvider", e);
+                    Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        } else {
+            Toast.makeText(requireContext(), "No hay aplicación de cámara disponible", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(requireContext(), "Permiso de cámara requerido para escanear facturas",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        return imageFile;
+    }
+
+    private String extractAmount(String ocrText) {
+        List<Double> amounts = new ArrayList<>();
+
+        String[] patterns = {
+                "\\$\\s*([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)",
+                "([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)\\s*\\$",
+                "total:?\\s*\\$?\\s*([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)",
+                "monto:?\\s*\\$?\\s*([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)",
+                "valor:?\\s*\\$?\\s*([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)",
+                "([0-9]{1,3}(?:[.,][0-9]{3})*(?:[.,][0-9]{2})?)"
+        };
+
+        for (String patternStr : patterns) {
+            Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(ocrText);
+
+            while (matcher.find()) {
+                String amountStr = matcher.group(1) != null ? matcher.group(1) : matcher.group(0);
+                amountStr = amountStr.replace("$", "").trim();
+
+                try {
+                    String normalizedAmount = normalizeAmount(amountStr);
+                    double amount = Double.parseDouble(normalizedAmount);
+
+                    if (amount >= 0.01 && amount <= 1000000) {
+                        amounts.add(amount);
+                    }
+                } catch (NumberFormatException e) {
+                    // Continuar con el siguiente match
+                }
+            }
+        }
+
+        if (amounts.isEmpty()) {
+            return "";
+        }
+
+        Double selectedAmount = findMostRelevantAmount(ocrText, amounts);
+
+        return selectedAmount != null ? String.format("%.2f", selectedAmount) : "";
+    }
+
+    private String normalizeAmount(String amountStr) {
+
+        if (amountStr.contains(",") && amountStr.contains(".")) {
+            int lastCommaIndex = amountStr.lastIndexOf(",");
+            int lastDotIndex = amountStr.lastIndexOf(".");
+
+            if (lastDotIndex > lastCommaIndex) {
+                return amountStr.replace(",", "");
+            } else {
+                return amountStr.replace(".", "").replace(",", ".");
+            }
+        } else if (amountStr.contains(",")) {
+            String[] parts = amountStr.split(",");
+            if (parts.length == 2 && parts[1].length() <= 2) {
+                return amountStr.replace(",", ".");
+            } else {
+                return amountStr.replace(",", "");
+            }
+        }
+
+        return amountStr;
+    }
+
+    private Double findMostRelevantAmount(String ocrText, List<Double> amounts) {
+        String lowerText = ocrText.toLowerCase();
+
+        String[] keywords = {"total", "monto", "valor", "importe", "pagar", "cobrar", "suma"};
+
+        for (String keyword : keywords) {
+            Pattern keywordPattern = Pattern.compile(keyword + "\\s*:?\\s*\\$?\\s*([0-9,\\.]+)", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = keywordPattern.matcher(ocrText);
+
+            while (matcher.find()) {
+                String amountStr = matcher.group(1);
+                try {
+                    String normalizedAmount = normalizeAmount(amountStr);
+                    double amount = Double.parseDouble(normalizedAmount);
+
+                    if (amounts.contains(amount)) {
+                        return amount;
+                    }
+                } catch (NumberFormatException e) {
+                    // Continuar buscando
+                }
+            }
+        }
+
+        return amounts.stream().max(Double::compareTo).orElse(null);
+    }
+
+    private String extractDetails(String ocrText) {
+        String lower = ocrText.toLowerCase();
+        String[] lines = ocrText.split("\n");
+
+        // Patrones específicos para diferentes tipos de transacciones
+        if (lower.contains("retiro") || lower.contains("withdrawal")) return "Retiro ATM";
+        if (lower.contains("recarga") || lower.contains("top up") || lower.contains("carga")) return "Recarga";
+        if (lower.contains("transferencia") || lower.contains("transfer")) return "Transferencia";
+        if (lower.contains("pago") && (lower.contains("tarjeta") || lower.contains("card"))) return "Pago con tarjeta";
+        if (lower.contains("deposito") || lower.contains("deposit")) return "Depósito";
+
+        // Tipos de establecimientos
+        if (lower.contains("supermarket") || lower.contains("supermercado") || lower.contains("super")) return "Supermercado";
+        if (lower.contains("restaurant") || lower.contains("restaurante")) return "Restaurante";
+        if (lower.contains("farmacia") || lower.contains("pharmacy")) return "Farmacia";
+        if (lower.contains("gasolina") || lower.contains("gas") || lower.contains("combustible")) return "Gasolina";
+        if (lower.contains("banco") || lower.contains("bank")) return "Banco";
+        if (lower.contains("cajero") || lower.contains("atm")) return "Cajero ATM";
+
+        // Buscar nombre del establecimiento en las primeras líneas
+        for (int i = 0; i < Math.min(3, lines.length); i++) {
+            String line = lines[i].trim();
+            if (line.length() > 3 && line.length() < 50 && !line.matches(".*\\d.*")) {
+                if (!line.toLowerCase().contains("factura") &&
+                        !line.toLowerCase().contains("ticket") &&
+                        !line.toLowerCase().contains("recibo")) {
+                    return line;
+                }
+            }
+        }
+
+        return "Transacción";
+    }
+
+    private boolean detectIfExpense(String ocrText) {
+        String lower = ocrText.toLowerCase();
+
+        // Indicadores claros de GASTO
+        String[] expenseKeywords = {
+                "retiro", "withdrawal", "pago", "compra", "purchase", "gasto", "expense",
+                "factura", "invoice", "ticket", "recibo", "debito", "debit",
+                "supermercado", "restaurante", "gasolina", "farmacia",
+                "total a pagar", "monto a pagar", "cobrar"
+        };
+
+        // Indicadores claros de INGRESO
+        String[] incomeKeywords = {
+                "recarga", "top up", "carga", "deposito", "deposit", "ingreso", "income",
+                "abono", "credit", "credito", "transferencia recibida", "pago recibido"
+        };
+
+        int expenseCount = 0;
+        int incomeCount = 0;
+
+        for (String keyword : expenseKeywords) {
+            if (lower.contains(keyword)) {
+                expenseCount++;
+            }
+        }
+
+        for (String keyword : incomeKeywords) {
+            if (lower.contains(keyword)) {
+                incomeCount++;
+            }
+        }
+
+        if (incomeCount > expenseCount) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            if (photoUri != null) {
+                Log.d("HomeFragment", "Imagen capturada exitosamente: " + photoUri.toString());
+                Toast.makeText(requireContext(), "Procesando factura escaneada...", Toast.LENGTH_SHORT).show();
+
+                try {
+                    InputImage image = InputImage.fromFilePath(requireContext(), photoUri);
+                    TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+
+                    recognizer.process(image)
+                            .addOnSuccessListener(visionText -> {
+                                String ocrText = visionText.getText();
+                                Log.d("OCR", "Texto reconocido:\n" + ocrText);
+
+                                String amount = extractAmount(ocrText);
+                                String details = extractDetails(ocrText);
+                                boolean isExpense = detectIfExpense(ocrText);
+
+                                TransactionFormFragment formFragment = new TransactionFormFragment();
+
+                                Bundle args = new Bundle();
+                                args.putString("ocr_amount", amount);
+                                args.putString("ocr_details", details);
+                                args.putBoolean("ocr_is_expense", isExpense);
+                                formFragment.setArguments(args);
+
+                                FragmentTransaction transaction = requireActivity()
+                                        .getSupportFragmentManager()
+                                        .beginTransaction();
+                                transaction.replace(R.id.fragment_container, formFragment);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
+
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("OCR", "Error procesando la imagen", e);
+                                Toast.makeText(requireContext(), "Error procesando la imagen", Toast.LENGTH_SHORT).show();
+                            });
+
+                } catch (IOException e) {
+                    Log.e("OCR", "Error cargando la imagen", e);
+                    Toast.makeText(requireContext(), "No se pudo leer la imagen", Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                Toast.makeText(requireContext(), "Error al capturar imagen", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            Toast.makeText(requireContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -265,13 +586,8 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
 
                 if (anio == anioActual && mes == mesActual) {
                     String tipo = tx.getType().trim().toLowerCase();
-
-                    if (tipo.equals("ingreso")) {
-                        totalIngresos += tx.getAmount();
-                    } else if (tipo.equals("gasto")) {
-                        totalGastos += tx.getAmount();
-                    }
-
+                    if (tipo.equals("ingreso")) totalIngresos += tx.getAmount();
+                    else if (tipo.equals("gasto")) totalGastos += tx.getAmount();
                 }
             }
         }
@@ -294,7 +610,7 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
             allTransactions.addAll(transactionRepo.getTransactionsByAccountId(acc.getId()));
         }
 
-        transactionAdapter = new TransactionAdapter(allTransactions, (TransactionAdapter.OnTransactionClickListener) this);
+        transactionAdapter = new TransactionAdapter(allTransactions, this);
         recyclerTransactions.setAdapter(transactionAdapter);
     }
 
