@@ -49,8 +49,11 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +67,7 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private static final int REQUEST_CODE_IMPORT_CSV = 1002;
     private Uri photoUri;
 
     private TextView tvBalanceValue;
@@ -129,8 +133,12 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
         });
 
         btnImport.setOnClickListener(v -> {
-            // Acción futura: importar CSV
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("text/*");  // o "text/csv"
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(intent, REQUEST_CODE_IMPORT_CSV);
         });
+
 
         btnScan.setOnClickListener(v -> {
             checkCameraPermissionAndOpenCamera();
@@ -292,6 +300,56 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
             Toast.makeText(requireContext(), "No hay aplicación de cámara disponible", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void importCsvFromUri(Uri uri) {
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            String line;
+            int lineNumber = 0;
+
+            while ((line = reader.readLine()) != null) {
+                if (lineNumber == 0) {
+                    // Saltar encabezado si es necesario
+                    lineNumber++;
+                    continue;
+                }
+
+                // Separar por coma
+                String[] tokens = line.split(",");
+
+                if (tokens.length >= 4) {
+                    String type = tokens[0].trim(); // ingreso o gasto
+                    double amount = Double.parseDouble(tokens[1].trim());
+                    String date = tokens[2].trim(); // Formato: YYYY-MM-DD
+                    String details = tokens[3].trim();
+
+                    String email = UserSession.getInstance().getUser().getEmail();
+                    AccountRepository accountRepo = new AccountRepository(requireContext());
+                    List<Account> userAccounts = accountRepo.getAccountsByUserEmail(email);
+
+                    if (!userAccounts.isEmpty()) {
+                        int accountId = userAccounts.get(0).getId();
+
+                        Transaction tx = new Transaction(0, amount, type, accountId, details, date, true);
+                        TransactionRepository txRepo = new TransactionRepository(requireContext());
+                        txRepo.insertTransaction(tx);
+                    }
+                }
+                lineNumber++;
+            }
+
+            Toast.makeText(getContext(), "Importación exitosa", Toast.LENGTH_SHORT).show();
+            loadTransactions(); // Recargar lista
+            updateBalance();    // Actualizar resumen
+            updateMonthlySummary();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Error al importar CSV", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -536,6 +594,13 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Toast.makeText(requireContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
         }
+
+        if (requestCode == REQUEST_CODE_IMPORT_CSV && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                importCsvFromUri(uri);
+            }
+        }
     }
 
     @Override
@@ -581,13 +646,17 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
 
             for (Transaction tx : transactions) {
                 String[] partesFecha = tx.getDate().split("-");
-                int anio = Integer.parseInt(partesFecha[0]);
-                int mes = Integer.parseInt(partesFecha[1]);
+                if (partesFecha.length >= 2) {
+                    int anio = Integer.parseInt(partesFecha[0]);
+                    int mes = Integer.parseInt(partesFecha[1]);
 
-                if (anio == anioActual && mes == mesActual) {
-                    String tipo = tx.getType().trim().toLowerCase();
-                    if (tipo.equals("ingreso")) totalIngresos += tx.getAmount();
-                    else if (tipo.equals("gasto")) totalGastos += tx.getAmount();
+                    if (anio == anioActual && mes == mesActual) {
+                        String tipo = tx.getType().trim().toLowerCase();
+                        if (tipo.equals("ingreso")) totalIngresos += tx.getAmount();
+                        else if (tipo.equals("gasto")) totalGastos += tx.getAmount();
+                    }
+                } else {
+                    Log.e("FormatoFecha", "Fecha malformada: " + tx.getDate());
                 }
             }
         }
