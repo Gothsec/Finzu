@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class TransactionCsvImporter {
@@ -53,7 +54,6 @@ public class TransactionCsvImporter {
                 String rawDate = columns[4].trim().replace("\"", "");
                 String formattedDate = normalizeDate(rawDate);
 
-                // Validar si el account_id existe
                 if (!accountExists(accountId)) {
                     Log.w("TransactionCsvImporter", "Cuenta no encontrada (ID " + accountId + "). Transacción ignorada.");
                     continue;
@@ -98,17 +98,22 @@ public class TransactionCsvImporter {
                 "dd/MM/yyyy",
                 "MM/dd/yyyy",
                 "dd-MM-yyyy",
-                "yyyy/MM/dd"
+                "yyyy/MM/dd",
+                "yyyy-MM-dd HH:mm:ss", // ya válida
+                "dd/MM/yyyy HH:mm:ss",
+                "MM/dd/yyyy HH:mm:ss"
         };
 
         for (String format : formats) {
             try {
                 SimpleDateFormat parser = new SimpleDateFormat(format, Locale.getDefault());
-                SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                return output.format(parser.parse(inputDate));
+                Date parsedDate = parser.parse(inputDate);
+                SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                return output.format(parsedDate);
             } catch (ParseException ignored) {}
         }
 
+        Log.w("TransactionCsvImporter", "Formato de fecha no reconocido: " + inputDate);
         return inputDate;
     }
 }
