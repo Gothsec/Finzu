@@ -70,6 +70,9 @@ public class NewAccountDialog extends DialogFragment {
 
             if (result != -1) {
                 ToastUtils.showShort(requireContext(), "Cuenta guardada: " + nombre);
+                
+                dismiss();
+
                 getParentFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, new AccountsFragment())
