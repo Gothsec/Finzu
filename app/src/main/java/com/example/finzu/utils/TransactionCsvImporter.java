@@ -25,11 +25,9 @@ public class TransactionCsvImporter {
     }
 
     public boolean importFromCsv(Uri fileUri) {
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
-            if (inputStream == null) return false;
+        try (InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             boolean isFirstLine = true;
 
@@ -38,58 +36,64 @@ public class TransactionCsvImporter {
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
-                    continue;
+                    continue; // saltar encabezado
                 }
 
-                // Manejar comas dentro de comillas
-                String[] columns = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                try {
+                    String[] columns = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                    if (columns.length < 5) {
+                        Log.w("TransactionCsvImporter", "Línea inválida, columnas insuficientes: " + line);
+                        continue;
+                    }
 
-                if (columns.length < 5) continue;
+                    String type = clean(columns[0]);
+                    double amount = Double.parseDouble(columns[1].trim());
+                    int accountId = Integer.parseInt(columns[2].trim());
+                    String details = clean(columns[3]);
+                    String rawDate = clean(columns[4]);
+                    String formattedDate = normalizeDate(rawDate);
 
-                String type = columns[0].trim().replace("\"", "");
-                double amount = Double.parseDouble(columns[1].trim());
-                int accountId = Integer.parseInt(columns[2].trim());
-                String details = columns[3].trim().replace("\"", "");
-                String rawDate = columns[4].trim().replace("\"", "");
-                String formattedDate = normalizeDate(rawDate);
+                    if (!accountExists(accountId)) {
+                        Log.w("TransactionCsvImporter", "Cuenta no encontrada: ID " + accountId + ". Ignorada.");
+                        continue;
+                    }
 
-                // Validar si el account_id existe
-                if (!accountExists(accountId)) {
-                    Log.w("TransactionCsvImporter", "Cuenta no encontrada (ID " + accountId + "). Transacción ignorada.");
-                    continue;
+                    Transaction transaction = new Transaction(
+                            0, amount, type, accountId, details, formattedDate, true
+                    );
+                    repository.insertTransaction(transaction);
+
+                } catch (Exception ex) {
+                    Log.e("TransactionCsvImporter", "Error al procesar línea: " + line, ex);
+                    // continuar con el siguiente registro
                 }
-
-                Transaction transaction = new Transaction(
-                        0,
-                        amount,
-                        type,
-                        accountId,
-                        details,
-                        formattedDate,
-                        true
-                );
-
-                repository.insertTransaction(transaction);
             }
 
-            reader.close();
             return true;
 
         } catch (Exception e) {
-            Log.e("TransactionCsvImporter", "Error al importar CSV: ", e);
+            Log.e("TransactionCsvImporter", "Error general al importar CSV", e);
             return false;
         }
     }
 
-    private boolean accountExists(int accountId) {
-        Cursor cursor = FinzuDatabaseHelper
-                .getInstance(context)
-                .getReadableDatabase()
-                .rawQuery("SELECT id FROM accounts WHERE id = ?", new String[]{String.valueOf(accountId)});
+    private String clean(String value) {
+        return value.trim().replaceAll("^\"|\"$", "");
+    }
 
-        boolean exists = (cursor != null && cursor.moveToFirst());
-        if (cursor != null) cursor.close();
-        return exists;
+    private boolean accountExists(int accountId) {
+        Cursor cursor = null;
+        try {
+            cursor = FinzuDatabaseHelper
+                    .getInstance(context)
+                    .getReadableDatabase()
+                    .rawQuery("SELECT id FROM accounts WHERE id = ?", new String[]{String.valueOf(accountId)});
+
+            return (cursor != null && cursor.moveToFirst());
+
+        } finally {
+            if (cursor != null) cursor.close();
+        }
     }
 
     private String normalizeDate(String inputDate) {
@@ -109,6 +113,6 @@ public class TransactionCsvImporter {
             } catch (ParseException ignored) {}
         }
 
-        return inputDate;
+        return inputDate; // fallback si no se pudo formatear
     }
 }
