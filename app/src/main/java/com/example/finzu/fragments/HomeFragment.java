@@ -40,6 +40,7 @@ import com.example.finzu.models.Transaction;
 import com.example.finzu.repositories.AccountRepository;
 import com.example.finzu.repositories.TransactionRepository;
 import com.example.finzu.session.UserSession;
+import com.example.finzu.utils.TransactionCsvImporter;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -138,7 +139,6 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(intent, REQUEST_CODE_IMPORT_CSV);
         });
-
 
         btnScan.setOnClickListener(v -> {
             checkCameraPermissionAndOpenCamera();
@@ -298,55 +298,6 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
             }
         } else {
             Toast.makeText(requireContext(), "No hay aplicación de cámara disponible", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void importCsvFromUri(Uri uri) {
-        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-
-            String line;
-            int lineNumber = 0;
-
-            while ((line = reader.readLine()) != null) {
-                if (lineNumber == 0) {
-                    // Saltar encabezado si es necesario
-                    lineNumber++;
-                    continue;
-                }
-
-                // Separar por coma
-                String[] tokens = line.split(",");
-
-                if (tokens.length >= 4) {
-                    String type = tokens[0].trim(); // ingreso o gasto
-                    double amount = Double.parseDouble(tokens[1].trim());
-                    String date = tokens[2].trim(); // Formato: YYYY-MM-DD
-                    String details = tokens[3].trim();
-
-                    String email = UserSession.getInstance().getUser().getEmail();
-                    AccountRepository accountRepo = new AccountRepository(requireContext());
-                    List<Account> userAccounts = accountRepo.getAccountsByUserEmail(email);
-
-                    if (!userAccounts.isEmpty()) {
-                        int accountId = userAccounts.get(0).getId();
-
-                        Transaction tx = new Transaction(0, amount, type, accountId, details, date, true);
-                        TransactionRepository txRepo = new TransactionRepository(requireContext());
-                        txRepo.insertTransaction(tx);
-                    }
-                }
-                lineNumber++;
-            }
-
-            Toast.makeText(getContext(), "Importación exitosa", Toast.LENGTH_SHORT).show();
-            loadTransactions(); // Recargar lista
-            updateBalance();    // Actualizar resumen
-            updateMonthlySummary();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Error al importar CSV", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -595,10 +546,19 @@ public class HomeFragment extends Fragment implements TransactionAdapter.OnTrans
             Toast.makeText(requireContext(), "Escaneo cancelado", Toast.LENGTH_SHORT).show();
         }
 
-        if (requestCode == REQUEST_CODE_IMPORT_CSV && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                Uri uri = data.getData();
-                importCsvFromUri(uri);
+        if (requestCode == REQUEST_CODE_IMPORT_CSV && resultCode == Activity.RESULT_OK && data != null) {
+            Uri fileUri = data.getData();
+
+            TransactionCsvImporter importer = new TransactionCsvImporter(requireContext());
+            boolean success = importer.importFromCsv(fileUri);
+
+            if (success) {
+                Toast.makeText(getContext(), "Importación exitosa", Toast.LENGTH_SHORT).show();
+                loadTransactions();
+                updateBalance();
+                updateMonthlySummary();
+            } else {
+                Toast.makeText(getContext(), "Error al importar CSV", Toast.LENGTH_LONG).show();
             }
         }
     }
